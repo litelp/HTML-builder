@@ -18,26 +18,26 @@ const dataStyleCSSFile = fs.createWriteStream(styleCSSPath);
 function copyHTML() {
   fs.copyFile(templatePath, indexHTMLPath, () => {
     console.log('file was copied');
-  });
-  const dataInHTML = fs.createReadStream(indexHTMLPath);
-  dataInHTML.on('data', (data) => {
-    let dataInString = data.toString();
-    fs.readdir(componentsPath, { withFileTypes: true }, (err, files) => {
-      if (err) console.log(err);
-      for (let file of files) {
-        const ext = path.extname(file.name).slice(1);
-        if (file.isFile() && ext === 'html') {
-          const filePath = path.join(componentsPath, file.name);
-          const dataFile = fs.createReadStream(filePath);
-          const fileName = file.name.split('.')[0];
-          dataFile.on('data', (data) => {
-            dataInString = dataInString.replaceAll(`{{${fileName}}}`, data);
-            fs.writeFile(indexHTMLPath, dataInString, () => {
-              console.log(`${file.name} inserted`);
+    const dataInHTML = fs.createReadStream(indexHTMLPath);
+    dataInHTML.on('data', (data) => {
+      let dataInString = data.toString();
+      fs.readdir(componentsPath, { withFileTypes: true }, (err, files) => {
+        if (err) console.log(err);
+        for (let file of files) {
+          const ext = path.extname(file.name).slice(1);
+          if (file.isFile() && ext === 'html') {
+            const filePath = path.join(componentsPath, file.name);
+            const dataFile = fs.createReadStream(filePath);
+            const fileName = file.name.split('.')[0];
+            dataFile.on('data', (data) => {
+              dataInString = dataInString.replaceAll(`{{${fileName}}}`, data);
+              fs.writeFile(indexHTMLPath, dataInString, () => {
+                console.log(`${file.name} inserted`);
+              });
             });
-          });
+          }
         }
-      }
+      });
     });
   });
 }
@@ -75,9 +75,9 @@ function copyDirAssets(pathToFile = assetsFolderPath) {
           { recursive: true },
           () => {
             console.log(`${file.name} copied`);
+            copyDirAssets(currentPath);
           },
         );
-        copyDirAssets(currentPath);
       }
     }
   });
