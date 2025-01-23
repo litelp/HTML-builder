@@ -1,9 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// создать папку project-dist
-// поместить в нее файлы index.html объединенный style.css и папку assets
-
 const templatePath = path.join(__dirname, 'template.html');
 const projectDistPath = path.join(__dirname, 'project-dist');
 const indexHTMLPath = path.join(projectDistPath, 'index.html');
